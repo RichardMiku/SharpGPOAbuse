@@ -38,6 +38,9 @@ jobs:
         name: published-artifacts  # 设置归档工件的名称
         path: ./publish  # 指定归档工件的路径
 
+    - name: Ensure publish directory exists
+      run: mkdir -p ./publish  # 确保发布目录存在
+
     - name: Zip published artifacts
       run: Compress-Archive -Path ./publish/* -DestinationPath ./SharpGPOAbuse.zip  # 压缩发布的工件
 
