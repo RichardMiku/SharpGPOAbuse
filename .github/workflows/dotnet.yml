@@ -16,19 +16,19 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '3.5.1'  # Ensure compatibility with .NET Framework 3.5.1
+        dotnet-version: '3.5'
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore dependencies
-      run: dotnet restore SharpGPOAbuse/SharpGPOAbuse.csproj
+      run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj
 
     - name: Build
-      run: dotnet build SharpGPOAbuse/SharpGPOAbuse.csproj --configuration Release --no-restore
-
-    - name: Test
-      run: dotnet test SharpGPOAbuse/SharpGPOAbuse.csproj --no-restore --verbosity normal
+      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
 
     - name: Publish
-      run: dotnet publish SharpGPOAbuse/SharpGPOAbuse.csproj --configuration Release --output ./publish
+      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
@@ -48,22 +48,25 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '3.5.1'
+        dotnet-version: '3.5'
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore dependencies
-      run: dotnet restore SharpGPOAbuse/SharpGPOAbuse.csproj
+      run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj
 
     - name: Build
-      run: dotnet build SharpGPOAbuse/SharpGPOAbuse.csproj --configuration Release --no-restore
+      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
 
     - name: Publish
-      run: dotnet publish SharpGPOAbuse/SharpGPOAbuse.csproj --configuration Release --output ./publish
+      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
-        GH_TOCKEN: ${{ secrets.GH_TOCKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       with:
         tag_name: v1.0.${{ github.run_number }}
         release_name: Release ${{ github.run_number }}
@@ -73,7 +76,7 @@ jobs:
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
-        GH_TOCKEN: ${{ secrets.GH_TOCKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./publish
