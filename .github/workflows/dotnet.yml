@@ -23,7 +23,8 @@ jobs:
       id: vswhere
       run: |
         $path = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        echo "msbuild=$path" >> $GITHUB_ENV  # 查找 MSBuild 的路径并设置为环境变量
+        echo "msbuild=$path" >> $GITHUB_ENV  
+      # 查找 MSBuild 的路径并设置为环境变量
 
     - name: Build
       run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release  # 使用 MSBuild 构建项目
