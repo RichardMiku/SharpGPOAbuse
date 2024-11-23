@@ -19,11 +19,17 @@ jobs:
     - name: Restore dependencies
       run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj -SolutionDirectory .
 
+    - name: Find MSBuild Path
+      id: vswhere
+      run: |
+        $path = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
+        echo "::set-output name=msbuild::$path"
+
     - name: Build
-      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
+      run: ${{ steps.vswhere.outputs.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
 
     - name: Publish
-      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
+      run: ${{ steps.vswhere.outputs.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
@@ -46,11 +52,17 @@ jobs:
     - name: Restore dependencies
       run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj -SolutionDirectory .
 
+    - name: Find MSBuild Path
+      id: vswhere
+      run: |
+        $path = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
+        echo "::set-output name=msbuild::$path"
+
     - name: Build
-      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
+      run: ${{ steps.vswhere.outputs.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
 
     - name: Publish
-      run: msbuild SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
+      run: ${{ steps.vswhere.outputs.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
 
     - name: Create Release
       id: create_release
