@@ -44,6 +44,9 @@ jobs:
     - name: Zip published artifacts
       run: Compress-Archive -Path ./publish/* -DestinationPath ./SharpGPOAbuse.zip  # 压缩发布的工件
 
+    - name: List directory contents
+      run: dir  # 输出目录结构
+
   release:
     needs: build  # 依赖 build 作业完成后再执行
     runs-on: windows-latest  # 使用最新的 Windows 运行环境
@@ -77,6 +80,9 @@ jobs:
 
     - name: Zip published artifacts
       run: Compress-Archive -Path ./publish/* -DestinationPath ./SharpGPOAbuse.zip  # 压缩发布的工件
+
+    - name: List directory contents
+      run: dir  # 输出目录结构
 
     - name: Create Release
       id: create_release
