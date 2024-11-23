@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '3.5.x'  # Ensure compatibility with .NET Framework 3.5
+        dotnet-version: '3.5.1'  # Ensure compatibility with .NET Framework 3.5.1
 
     - name: Restore dependencies
       run: dotnet restore SharpGPOAbuse/SharpGPOAbuse.csproj
@@ -48,7 +48,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '3.5.x'
+        dotnet-version: '3.5.1'
 
     - name: Restore dependencies
       run: dotnet restore SharpGPOAbuse/SharpGPOAbuse.csproj
