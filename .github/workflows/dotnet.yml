@@ -66,6 +66,9 @@ jobs:
     - name: Publish
       run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish  # 发布项目
 
+    - name: Ensure publish directory exists
+      run: mkdir -p ./publish  # 确保发布目录存在
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
