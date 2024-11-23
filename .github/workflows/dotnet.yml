@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish SharpGPOAbuse/SharpGPOAbuse.csproj --configuration Release --output ./publish
 
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: published-artifacts
         path: ./publish
