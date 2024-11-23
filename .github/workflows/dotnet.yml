@@ -3,84 +3,85 @@ name: .NET Framework Build and Release
 on:
   push:
     branches:
-      - master
+      - master  # 当推送到 master 分支时触发工作流
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest  # 使用最新的 Windows 运行环境
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2  # 检出代码仓库
 
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+      uses: NuGet/setup-nuget@v1.0.5  # 配置 NuGet 环境
 
     - name: Restore dependencies
-      run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj -SolutionDirectory .
+      run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj -SolutionDirectory .  # 还原项目依赖项
 
     - name: Find MSBuild Path
       id: vswhere
       run: |
         $path = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        echo "msbuild=$path" >> $GITHUB_ENV
+        echo "msbuild=$path" >> $GITHUB_ENV  # 查找 MSBuild 的路径并设置为环境变量
 
     - name: Build
-      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
+      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release  # 使用 MSBuild 构建项目
 
     - name: Publish
-      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
+      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish  # 发布项目
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: published-artifacts
-        path: ./publish
+        name: published-artifacts  # 设置归档工件的名称
+        path: ./publish  # 指定归档工件的路径
 
   release:
-    needs: build
-    runs-on: windows-latest
-    if: github.ref == 'refs/heads/master'
+    needs: build  # 依赖 build 作业完成后再执行
+    runs-on: windows-latest  # 使用最新的 Windows 运行环境
+    if: github.ref == 'refs/heads/master'  # 仅当分支为 master 时执行
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2  # 检出代码仓库
 
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+      uses: NuGet/setup-nuget@v1.0.5  # 配置 NuGet 环境
 
     - name: Restore dependencies
-      run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj -SolutionDirectory .
+      run: nuget restore SharpGPOAbuse/SharpGPOAbuse.csproj -SolutionDirectory .  # 还原项目依赖项
 
     - name: Find MSBuild Path
       id: vswhere
       run: |
         $path = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        echo "msbuild=$path" >> $GITHUB_ENV
+        echo "msbuild=$path" >> $GITHUB_ENV  
+      # 查找 MSBuild 的路径并设置为环境变量
 
     - name: Build
-      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release
+      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release  # 使用 MSBuild 构建项目
 
     - name: Publish
-      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish
+      run: ${{ env.msbuild }} SharpGPOAbuse/SharpGPOAbuse.csproj /p:Configuration=Release /p:OutputPath=./publish  # 发布项目
 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
-        GH_TOCKEN: ${{ secrets.GH_TOCKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # 使用 GitHub Secrets 中的 GH_TOKEN 环境变量
       with:
-        tag_name: v1.0.${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
-        draft: false
-        prerelease: false
+        tag_name: v1.0.${{ github.run_number }}  # 设置发布的标签名称
+        release_name: Release ${{ github.run_number }}  # 设置发布的名称
+        draft: false  # 指定不是草稿
+        prerelease: false  # 指定不是预发布版本
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
-        GH_TOCKEN: ${{ secrets.GH_TOCKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # 使用 GitHub Secrets 中的 GH_TOKEN 环境变量
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish
-        asset_name: SharpGPOAbuse.zip
-        asset_content_type: application/zip
+        upload_url: ${{ steps.create_release.outputs.upload_url }}  # 上传发布的工件
+        asset_path: ./publish  # 指定工件的路径
+        asset_name: SharpGPOAbuse.zip  # 指定工件的名称
+        asset_content_type: application/zip  # 指定工件的 MIME 类型
