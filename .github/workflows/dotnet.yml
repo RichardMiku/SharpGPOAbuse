@@ -38,6 +38,9 @@ jobs:
         name: published-artifacts  # 设置归档工件的名称
         path: ./publish  # 指定归档工件的路径
 
+    - name: Zip published artifacts
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./SharpGPOAbuse.zip  # 压缩发布的工件
+
   release:
     needs: build  # 依赖 build 作业完成后再执行
     runs-on: windows-latest  # 使用最新的 Windows 运行环境
@@ -69,6 +72,9 @@ jobs:
     - name: Ensure publish directory exists
       run: mkdir -p ./publish  # 确保发布目录存在
 
+    - name: Zip published artifacts
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./SharpGPOAbuse.zip  # 压缩发布的工件
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -86,6 +92,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # 使用 GitHub Secrets 中的 GH_TOKEN 环境变量
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # 上传发布的工件
-        asset_path: ./publish  # 指定工件的路径
+        asset_path: ./SharpGPOAbuse.zip  # 指定工件的路径
         asset_name: SharpGPOAbuse.zip  # 指定工件的名称
         asset_content_type: application/zip  # 指定工件的 MIME 类型
